@@ -22,10 +22,12 @@ openai_api_key = ''
 - Ingesting data: `python app/indexing_data.py`
 This ingests the data from the sources, storing embeddings in the `InMemoryVectorStore` first. Then the store itself is dumped to file system at the path specified in the `.env` (default: `embeddings_dump.json`).
 
-- Chatting with the bot: `python app/retrieve_generate.py`
+- Checking generation: `python app/retrieve_generate.py`
 This loads the embeddings from the file system and uses them to answer questions (RAG workflow).
 
+- Chatting with the bot: `streamlit run app/app_streamlit.py`
+Opens up a streamlit-UI chat interface on the localhosts
+
 #### Features/Todos:
-- Streamlit app to chat with the bot
 - Deploy 
 - Include Wordpress posts into data
