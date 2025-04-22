@@ -9,8 +9,6 @@ from langchain_openai import OpenAIEmbeddings
 from bs4 import BeautifulSoup
 import requests
 from config import get_settings
-from retrieve_generate import prompt, State, llm
-from langgraph.graph import START, StateGraph
 
 logger = get_settings().logger
 
@@ -73,21 +71,6 @@ def embed_and_store_documents(splits):
     logger.info(f'{len(doc_ids)} documents stored in vector store, such as {doc_ids[3]}: {vector_store.get_by_ids([doc_ids[3]])}')
     return doc_ids, vector_store
 
-def retrieve(state: State) -> State:
-    global vector_store
-    retrieved_docs = vector_store.similarity_search(state['question'], k=3)
-    return {'context': retrieved_docs}
-
-def generate(state: State) -> State:
-    docs_content = "\n\n".join(doc.page_content for doc in state['context'])
-    messages = prompt.invoke({
-        'question': state['question'],
-        'context': docs_content
-    })
-    response = llm.invoke(messages)
-    return {'answer': response.content}
-
-
 if __name__=='__main__':
     extracted_data = []
     portfolio_site = get_settings().portfolio_site
@@ -126,13 +109,14 @@ if __name__=='__main__':
 
     # Embed and Store Documents in a vector store
     document_ids, vector_store = embed_and_store_documents(all_splits)
-    logger.info(f'Stored {len(all_splits)} documents in vector store: {vector_store} with IDs: {document_ids[:3]}')
-    print(f'Stored {len(all_splits)} documents in vector store: {document_ids[:3]}')
+    logger.info(f'Stored {len(all_splits)} documents with IDs: {document_ids[:3]}')
+    print(f'Stored {len(all_splits)} documents with IDs: {document_ids[:3]}')
 
-    # RAG:
-    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
-    graph_builder.add_edge(START, "retrieve")
-    graph = graph_builder.compile()
-    result = graph.invoke({'question': 'What is my name?'})
-    print(f'Context: {result["context"]}')
-    print(f'Answer: {result["answer"]}')
+    # Save the vector to file system (because the data isn't a lot)
+    vectorstore_dump = get_settings().vectorstore_path
+    vector_store.dump(vectorstore_dump)
+
+    logger.info(f'Data Ingestion complete. Saved embeddings from data in {vectorstore_dump}')
+    logger.info('='*100)
+    print(f'Data Ingestion complete. Saved embeddings from data in {vectorstore_dump}')
+    print('='*100)

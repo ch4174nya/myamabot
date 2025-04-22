@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     resume_url: str = "<some path>.pdf"
     # personal_blogs_site: str
     openai_api_key: str = 'sk_xxxxx'
+    vectorstore_path: str = 'embeddings_dump.json'
 
     logging.basicConfig(
         filename="app.log", 
