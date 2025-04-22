@@ -1,3 +1,4 @@
+from functools import lru_cache
 from langchain.prompts import PromptTemplate
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
@@ -16,12 +17,21 @@ os.environ['OPENAI_API_KEY'] = openai_api_key
 llm = init_chat_model("gpt-4o-mini", model_provider="openai")
 
 def get_vector_store(path: str) -> InMemoryVectorStore:
+    # check if the embeddings are available
+    if not os.path.exists(path):
+        logger.error(f'Vector store not found at {path}')
+        logger.error('Please run indexing_data.py first')
+        print(f'Vector store not found at {path}. \nPlease run indexing_data.py first')
+        exit(1)
+    
     embeddings = OpenAIEmbeddings(model='text-embedding-3-large')
     vector_store = InMemoryVectorStore.load(
         path=path, 
         embedding=embeddings
     )
     return vector_store
+
+vector_store = get_vector_store(get_settings().vectorstore_path)
 
 template = """
 You are an assistant for question-answering tasks. 
@@ -42,7 +52,6 @@ class State(TypedDict):
 
 
 def retrieve(state: State) -> State:
-    vector_store = get_vector_store(get_settings().vectorstore_path)
     retrieved_docs = vector_store.similarity_search(state['question'], k=3)
     return {'context': retrieved_docs}
 
@@ -57,24 +66,22 @@ def generate(state: State) -> State:
 
 
 if __name__=='__main__':
-    # check if the embeddings are available
-    vector_store_path = get_settings().vectorstore_path
-    if not os.path.exists(vector_store_path):
-        logger.error(f'Vector store not found at {vector_store_path}')
-        logger.error('Please run indexing_data.py first')
-        print(f'Vector store not found at {vector_store_path}. \nPlease run indexing_data.py first')
-        exit(1)
-    
     # RAG:
     graph_builder = StateGraph(State).add_sequence([retrieve, generate])
     graph_builder.add_edge(START, "retrieve")
     graph = graph_builder.compile()
 
-    question = 'What can you tell me about SAFER?' #'What is my name?'
-    result = graph.invoke({'question': question})
-    logger.info(f'Context: {result["context"]}')
-    logger.info(f'Answer: {result["answer"]}')
+    questions = [
+        'What can you tell me about SAFER?', 
+        'What is my name?',
+        'Does Chaitanya know Python?',
+        'Has Chaitanya worked on JavaScript?',
+        'List his employers']
+    for ques in questions:
+        result = graph.invoke({'question': ques})
+        logger.info(f'Context: {result["context"]}')
+        logger.info(f'Answer: {result["answer"]}')
 
-    print(f'Question: {question}')
-    print(f'Answer: {result["answer"]}')
+        print(f'Question: {ques}')
+        print(f'Answer: {result["answer"]}')
 
