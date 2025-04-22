@@ -9,6 +9,8 @@ from langchain.chat_models import init_chat_model
 from langgraph.graph import START, StateGraph
 import os
 
+import streamlit as st
+
 logger = get_settings().logger
 
 openai_api_key = get_settings().openai_api_key
@@ -65,23 +67,23 @@ def generate(state: State) -> State:
     return {'answer': response.content}
 
 
-if __name__=='__main__':
-    # RAG:
-    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
-    graph_builder.add_edge(START, "retrieve")
-    graph = graph_builder.compile()
 
-    questions = [
-        'What can you tell me about SAFER?', 
-        'What is my name?',
-        'Does Chaitanya know Python?',
-        'Has Chaitanya worked on JavaScript?',
-        'List his employers']
-    for ques in questions:
-        result = graph.invoke({'question': ques})
-        logger.info(f'Context: {result["context"]}')
-        logger.info(f'Answer: {result["answer"]}')
+# RAG:
+graph_builder = StateGraph(State).add_sequence([retrieve, generate])
+graph_builder.add_edge(START, "retrieve")
+graph = graph_builder.compile()
 
-        print(f'Question: {ques}')
-        print(f'Answer: {result["answer"]}')
+questions = [
+    'What can you tell me about SAFER?', 
+    'What is my name?',
+    'Does Chaitanya know Python?',
+    'Has Chaitanya worked on JavaScript?',
+    'List his employers']
+for ques in questions:
+    result = graph.invoke({'question': ques})
+    logger.info(f'Context: {result["context"]}')
+    logger.info(f'Answer: {result["answer"]}')
+
+    print(f'Question: {ques}')
+    print(f'Answer: {result["answer"]}')
 
