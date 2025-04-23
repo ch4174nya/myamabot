@@ -73,17 +73,17 @@ graph_builder = StateGraph(State).add_sequence([retrieve, generate])
 graph_builder.add_edge(START, "retrieve")
 graph = graph_builder.compile()
 
-questions = [
-    'What can you tell me about SAFER?', 
-    'What is my name?',
-    'Does Chaitanya know Python?',
-    'Has Chaitanya worked on JavaScript?',
-    'List his employers']
-for ques in questions:
-    result = graph.invoke({'question': ques})
-    logger.info(f'Context: {result["context"]}')
-    logger.info(f'Answer: {result["answer"]}')
+# questions = [
+#     'What can you tell me about SAFER?', 
+#     'What is my name?',
+#     'Does Chaitanya know Python?',
+#     'Has Chaitanya worked on JavaScript?',
+#     'List his employers']
+# for ques in questions:
+#     result = graph.invoke({'question': ques})
+#     logger.info(f'Context: {result["context"]}')
+#     logger.info(f'Answer: {result["answer"]}')
 
-    print(f'Question: {ques}')
-    print(f'Answer: {result["answer"]}')
+#     print(f'Question: {ques}')
+#     print(f'Answer: {result["answer"]}')
 
