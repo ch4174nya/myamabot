@@ -28,6 +28,6 @@ This loads the embeddings from the file system and uses them to answer questions
 - Chatting with the bot: `streamlit run app/app_streamlit.py`
 Opens up a streamlit-UI chat interface on the localhosts
 
-#### Features/Todos:
-- Deploy 
+#### Todos:
+- Deploy on Cloud 
 - Include Wordpress posts into data
