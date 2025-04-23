@@ -28,6 +28,11 @@ This loads the embeddings from the file system and uses them to answer questions
 - Chatting with the bot: `streamlit run app/app_streamlit.py`
 Opens up a streamlit-UI chat interface on the localhosts
 
-#### Todos:
-- Deploy on Cloud 
-- Include Wordpress posts into data
+4. Deploying on Cloud
+I tried deploying on Google Cloud through the following steps:
+
+    1. Build docker image (refer the `Dockerfile` in the repo)
+    2. Tag the docker image such that it can be pushed to Google Container Registry. It would need to be of the format: `HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE`    
+    3. Push the docker image to Google Container Registry using `docker push <GCloud compatible image-name>`
+    4. Deploy the app as a container on [Google Cloud Run](https://cloud.google.com/run).
+
