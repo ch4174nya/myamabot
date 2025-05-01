@@ -1,6 +1,8 @@
 # myamabot
 An LLM based AMA bot, trained on data from my blog, website and Resume.
 
+<img src="demo_gif.gif">
+
 ## Setup
 
 1. Install dependencies
