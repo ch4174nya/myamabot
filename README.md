@@ -31,7 +31,8 @@ This loads the embeddings from the file system and uses them to answer questions
 Opens up a streamlit-UI chat interface on the localhosts
 
 4. Deploying on Cloud
-I tried deploying on Google Cloud through the following steps:
+
+- I tried deploying on Google Cloud through the following steps:
 
     1. Build docker image (refer the `Dockerfile` in the repo)
     2. Tag the docker image such that it can be pushed to Google Container Registry. It would need to be of the format: `HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE`    
